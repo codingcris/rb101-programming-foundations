@@ -1,0 +1,13 @@
+welcome: "Hello, thank you for using our loan calculator."
+uses: >
+      Our loan calculator will determine your monthly interest rate as well as the loan duration in months.
+      We'll need some information first.
+loan_ammount: "Enter loan ammount:"
+apr: "Enter APR (Annual Percentage Rate).
+Example: 5 for 5%, 2.5 for 2.5%"
+loan_duration: "Enter loan duration in years:"
+invalid: "Your input is invalid. Try again."
+summary: "Here is a summary of your loan:"
+divider: "---------------------------------"
+again: "Would you like to perform another calculation? (Y/N)"
+goodbye: "Goodbye."

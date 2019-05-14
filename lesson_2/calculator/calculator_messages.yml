@@ -1,0 +1,7 @@
+welcome: "Welcome to the calculator!"
+first_number: "Enter the first number:"
+second_number: "Enter the second number:"
+valid_number: "Make sure to enter a valid number"
+valid_operation: "Make sure to enter a valid operation"
+result: "Result is "
+continue: "Continue using calculator? (Y/N)"
