@@ -1,4 +1,3 @@
-require 'bigdecimal'
 require 'yaml'
 MESSAGES = YAML.load_file('loan_calculator_messages.yml')
 
