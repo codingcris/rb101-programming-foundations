@@ -20,7 +20,7 @@ loop do
   loan_ammount = ''
   loop do
     prompt(MESSAGES['loan_ammount'])
-    print("$")
+    print('$')
     loan_ammount = gets.chomp
     # remove commas if user inputs a number in the format 1,000
     loan_ammount = loan_ammount.split(",").join if loan_ammount.include?(",")
@@ -46,17 +46,17 @@ loop do
 
   monthly_interest_rate = (apr.to_f / 100) / 12
   duration_to_months = (loan_duration.to_f * 12).to_i
-  monthly_payment = loan_ammount.to_f * (monthly_interest_rate / (1 - (1 + monthly_interest_rate)**(-duration_to_months)))
+  monthly_payment = loan_ammount.to_f * (monthly_interest_rate / (1 - (1 + monthly_interest_rate)**-duration_to_months))
 
   info = {
     'loan ammount' => '$' + loan_ammount.to_s,
     'APR' => apr.to_s + '%',
-    'loan duration' => loan_duration.to_s + ' years',
+    'loan duration' => loan_duration.to_s + ' years'
   }
 
   prompt(MESSAGES['summary'])
   puts(MESSAGES['divider'])
-  info.each { |key,value| puts(key.ljust(15) + "#{value}") }
+  info.each { |key, value| puts(key.ljust(15) + value.to_s) }
   puts(MESSAGES['divider'])
 
   prompt("Your monthly payment is $%.2f for #{duration_to_months} months with a monthly interest rate of %.4f%" % [monthly_payment, (monthly_interest_rate * 100)])
