@@ -137,8 +137,11 @@ def results(player, computer)
 end
 
 def print_play_on_question(player_wins, computer_wins)
-  prompt player_wins.to_i < 5 && computer_wins.to_i < 5 ? "Proceed to next round?(Y/N)" :
-"Want to play again?(Y/N)"
+  if player_wins.to_i < 5 && computer_wins.to_i < 5
+    prompt "Proceed to next round?(Y/N)"
+  else
+    prompt "Want to play again?(Y/N)"
+  end
 end
 
 def again?(player_wins, computer_wins)
@@ -151,30 +154,32 @@ def again?(player_wins, computer_wins)
     else break
     end
   end
-  update_score(true, player_wins, computer_wins) if(player_wins.to_i == 5 || computer_wins.to_i == 5)
+  if player_wins.to_i == 5 || computer_wins.to_i == 5
+    update_score(true, player_wins, computer_wins)
+  end
   response == 'y'
 end
 
 def update_score(clear, *wins)
-  unless clear
-    current_wins = wins[0].to_i
-    wins[0].clear
-    wins[0] << (current_wins + 1).to_s
-  else
+  if clear
     wins[0].clear
     wins[0] << '0'
     wins[1].clear
     wins[1] << '0'
+  else
+    current_wins = wins[0].to_i
+    wins[0].clear
+    wins[0] << (current_wins + 1).to_s
   end
 end
 
 def display_score(player, computer)
   if player.to_i < 5 && computer.to_i < 5
     prompt "Current Score : You -> #{player} ; Computer -> #{computer}"
-  else
-    prompt player.to_i > computer.to_i ? "Final score #{player} to #{computer}. You're th\
-e Grand Champion!" : "Final score #{computer} to #{player}. Computer is the \
-Grand Champion!"
+  elsif player.to_i > computer.to_i
+    prompt "Final score #{player} to #{computer}. You're the Grand Champion!"
+  else prompt "Final score #{computer} to #{player}. Computer is the Grand\
+Champion!"
   end
 end
 
@@ -191,17 +196,15 @@ loop do
   prompt result
 
   if result == 'You win!'
-    update_score(false,player_wins)
+    update_score(false, player_wins)
   elsif result == 'Computer wins!'
-    update_score(false,computer_wins)
+    update_score(false, computer_wins)
   end
 
   display_score(player_wins, computer_wins)
-#reset score incase player wants to play again
 
-unless again?(player_wins, computer_wins)
-  prompt "Thanks for playing!"
-  break
-end
-
+  unless again?(player_wins, computer_wins)
+    prompt "Thanks for playing!"
+    break
+  end
 end
