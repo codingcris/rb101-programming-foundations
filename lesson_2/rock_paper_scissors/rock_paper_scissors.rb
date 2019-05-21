@@ -60,6 +60,7 @@ WINNERS = {
   spock: ['scissors', 'rock']
 }
 CLEAR = Gem.win_platform? ? "cls" : "clear"
+GRANDCHAMP_SCORE = 5
 
 def display_game_animation
   system(CLEAR)
@@ -137,7 +138,7 @@ def results(player, computer)
 end
 
 def print_play_on_question(player_wins, computer_wins)
-  if player_wins.to_i < 5 && computer_wins.to_i < 5
+  if player_wins.to_i < GRANDCHAMP_SCORE && computer_wins.to_i < GRANDCHAMP_SCORE
     prompt "Proceed to next round?(Y/N)"
   else
     prompt "Want to play again?(Y/N)"
@@ -154,7 +155,7 @@ def again?(player_wins, computer_wins)
     else break
     end
   end
-  if player_wins.to_i == 5 || computer_wins.to_i == 5
+  if player_wins.to_i == GRANDCHAMP_SCORE || computer_wins.to_i == GRANDCHAMP_SCORE
     update_score(true, player_wins, computer_wins)
   end
   response == 'y'
@@ -174,7 +175,7 @@ def update_score(clear, *wins)
 end
 
 def display_score(player, computer)
-  if player.to_i < 5 && computer.to_i < 5
+  if player.to_i < GRANDCHAMP_SCORE && computer.to_i < GRANDCHAMP_SCORE
     prompt "Current Score : You -> #{player} ; Computer -> #{computer}"
   elsif player.to_i > computer.to_i
     prompt "Final score #{player} to #{computer}. You're the Grand Champion!"
@@ -187,6 +188,7 @@ player_wins = '0'
 computer_wins = '0'
 loop do
   display_game_animation
+  prompt "Win 5 rounds to become Grand Champion!"
   user_choice = choice
   computer_choice = VALID_CHOICES.sample
 
