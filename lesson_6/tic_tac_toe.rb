@@ -6,12 +6,11 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
                 [[1, 5, 9], [3, 5, 7]]              # diagonals
 COIN = ['heads', 'tails']
-
+GRAND_CHAMP_SCORE = 5
 def prompt(msg)
   puts "=> #{msg}"
 end
 
-# rubocop:disable Metrics/MethodLength
 def choose
   prompt "Coin toss will determine who goes first."
   choice = ''
@@ -32,7 +31,6 @@ def choose
   sleep(3)
   first
 end
-# rubocop:enable Metrics/MethodLength
 
 def initialize_board
   board = {}
@@ -43,7 +41,7 @@ end
 def display_board(board_vals)
   system(CLEAR)
   prompt "You are #{PLAYER_MARKER}. Computer is #{COMPUTER_MARKER}."
-  prompt "First to 5 wins"
+  prompt "First to #{GRAND_CHAMP_SCORE} wins"
   board = <<-BOARD
      |     |
   #{board_vals[1]}  |  #{board_vals[2]}  |  #{board_vals[3]}
@@ -63,23 +61,24 @@ def empty_squares(board)
   board.keys.select { |num| board[num] == INITIAL_MARKER }
 end
 
-# rubocop:disable Lint/UselessAssignment
 def joinor(board)
-  str = if board.length > 1
-          board.slice(0...board.length - 1).join(", ") + " or #{board.last}"
-        else
-          board.first.to_s
-        end
+  if board.length > 1
+    board.slice(0...board.length - 1).join(", ") + " or #{board.last}"
+  else
+    board.first.to_s
+  end
 end
-# rubocop:enable Lint/UselessAssignment
 
 def player_places_piece!(board, current_player)
   if current_player == 'player'
     square = ""
     loop do
       prompt "Choose a square: (#{joinor(empty_squares(board))})"
-      square = gets.chomp.to_i
-      break if empty_squares(board).include?(square)
+      square = gets.chomp
+      if square.to_i.to_s == square
+        square = square.to_i
+        break if empty_squares(board).include?(square)
+      end
       prompt "Sorry, invalid choice."
     end
     board[square] = PLAYER_MARKER
@@ -89,17 +88,20 @@ def player_places_piece!(board, current_player)
 end
 
 def alternate_player(player)
-  case player
-  when 'player' then player.clear << 'computer'
-  else player.clear << 'player'
-  end
+  temp = player.dup
+  player.clear << case temp
+                  when 'player' then 'computer'
+                  else 'player'
+                  end
 end
 
 def find_immediate_threat(board)
   threats = []
   WINNING_LINES.each do |line|
     if board.values_at(*line).count(PLAYER_MARKER) == 2
-      line.each { |square| threats << square if board[square] == INITIAL_MARKER }
+      line.each do |square|
+        threats << square if board[square] == INITIAL_MARKER
+      end
     end
   end
   threats
@@ -109,7 +111,9 @@ def find_opportunity(board)
   opportunities = []
   WINNING_LINES.each do |line|
     if board.values_at(*line).count(COMPUTER_MARKER) == 2
-      line.each { |square| opportunities << square if board[square] == INITIAL_MARKER }
+      line.each do |square|
+        opportunities << square if board[square] == INITIAL_MARKER
+      end
     end
   end
   opportunities
@@ -140,29 +144,31 @@ def winner?(board)
   !!detect_winner(board)
 end
 
-# rubocop:disable Style/ParenthesesAroundCondition
 def detect_winner(board)
   WINNING_LINES.each do |line|
-    # assignment in conditional is intentional in following lines
-    if (winner = line.all? { |e| board[e] == PLAYER_MARKER })
-      return "Player" if winner
-    elsif (winner = line.all? { |e| board[e] == COMPUTER_MARKER })
-      return "Computer" if winner
+    if line.all? { |e| board[e] == PLAYER_MARKER }
+      return "Player"
+    elsif line.all? { |e| board[e] == COMPUTER_MARKER }
+      return "Computer"
     end
   end
   nil
 end
-# rubocop:enable Style/ParenthesesAroundCondition
 
 def display_score(player, computer)
-  print(player < 5 && computer < 5 ? "=> Current score: " : "=> Final Score: ")
+  if player < GRAND_CHAMP_SCORE && computer < GRAND_CHAMP_SCORE
+    print "=> Current score: "
+  else
+    print "=> Final Score: "
+  end
+
   puts "You => #{player} : Computer => #{computer}"
 end
 
 def play_again?(player_score, computer_score)
   answer = ''
   loop do
-    if player_score < 5 && computer_score < 5
+    if player_score < GRAND_CHAMP_SCORE && computer_score < GRAND_CHAMP_SCORE
       prompt "Play next round? (Y/N)"
     else
       prompt "Play again? (Y/N)"
@@ -201,7 +207,7 @@ loop do
     when 'Computer' then computer_score += 1
     end
 
-    if player_score < 5 && computer_score < 5
+    if player_score < GRAND_CHAMP_SCORE && computer_score < GRAND_CHAMP_SCORE
       prompt "#{detect_winner(board)} wins round!"
     else
       prompt "#{detect_winner(board)} wins everything!"
@@ -214,7 +220,7 @@ loop do
   display_score(player_score, computer_score)
 
   if play_again?(player_score, computer_score)
-    if player_score == 5 || computer_score == 5
+    if player_score == GRAND_CHAMP_SCORE || computer_score == GRAND_CHAMP_SCORE
       player_score = 0
       computer_score = 0
     end
